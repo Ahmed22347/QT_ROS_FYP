@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot name="pickable_cylinder">
+
+  <!-- Link Definition -->
+  <link name="base_link">
+    <!-- Visual Properties -->
+    <visual>
+      <geometry>
+        <cylinder radius="0.02" length="0.03"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+
+    <!-- Collision Properties -->
+    <collision>
+      <geometry>
+        <cylinder radius="0.02" length="0.03"/>
+      </geometry>
+    </collision>
+
+    <!-- Inertial Properties -->
+    <inertial>
+      <mass value="0.1"/>
+      <inertia 
+        ixx="0.00001667" ixy="0" ixz="0"
+        iyy="0.00001667" iyz="0"
+        izz="0.000005"/>
+    </inertial>
+  </link>
+
+</robot>
