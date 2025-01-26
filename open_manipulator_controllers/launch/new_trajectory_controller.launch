@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="sim" default="true" />
+
+  <include file="$(find open_manipulator_controllers)/launch/joint_trajectory_controller.launch">
+    <arg name="sim" value="$(arg sim)" />
+  </include>
+
+  <node name="new_trajectory" pkg="open_manipulator_controllers" type="new_trajectory" output="screen"/>
+</launch>
+

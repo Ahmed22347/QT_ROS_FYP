@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Assem1_car">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="2.95927006135576E-06 0.00882340028254072 -0.000364601323793866"
+        rpy="0 0 0" />
+      <mass
+        value="0.00955918486061169" />
+      <inertia
+        ixx="7.70289678978991E-07"
+        ixy="2.51770146190825E-10"
+        ixz="-2.56806026500112E-11"
+        iyy="7.92981801927202E-07"
+        iyz="3.19285955668006E-08"
+        izz="6.54426065694542E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://open_manipulator_controllers/include/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://open_manipulator_controllers/include/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+</robot>

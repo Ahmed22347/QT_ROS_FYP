@@ -1,0 +1,10 @@
+arm2_joint1:
+  ID: 11
+arm2_joint2:
+  ID: 12
+arm2_joint3:
+  ID: 13
+arm2_joint4:
+  ID: 14
+arm2_virtual_roll_joint:
+  ID: 15

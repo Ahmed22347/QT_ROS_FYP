@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="sim" default="true"/>
+  <arg name="usb_port_arm1" default="/dev/ttyUSB0" />
+  <arg name="usb_port_arm2" default="/dev/ttyUSB1" />
+  
+  <!-- Load URDFs into separate robot_description parameters -->
+  <group ns="arm1">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find open_manipulator_description)/urdf/open_manipulator_robot.urdf.xacro'" />
+  </group>
+  
+  <!-- Group for arm2 -->
+  <group ns="arm2">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find open_manipulator_description)/urdf/open_manipulator_robot_2.urdf.xacro'" />
+  </group>
+  
+  <!-- Arm 1: startup ros_control for real robot -->
+  <group unless="$(arg sim)">
+    <include file="$(find open_manipulator_hw)/launch/open_manipulator_control.launch" ns ="arm1">
+      <arg name="usb_port" value="$(arg usb_port_arm1)"/>
+    </include>
+  </group>
+
+  <!-- Arm 2: startup ros_control for real robot -->
+  <group unless="$(arg sim)">
+    <include file="$(find open_manipulator_hw)/launch/open_manipulator_control_2.launch" ns ="arm2">
+      <arg name="usb_port" value="$(arg usb_port_arm2)"/>
+    </include>
+  </group>
+
+  <!-- startup simulated world and spawn both robots-->
+  <group if="$(arg sim)">
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="paused" value="true"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="gui" value="true"/>
+      <arg name="headless" value="false"/>
+      <arg name="debug" value="false"/>
+    </include>
+
+    <!-- Spawn Arm 1 -->
+    <node name="spawn_arm1" pkg="gazebo_ros" type="spawn_model" output="screen" ns="arm1"
+          args="-urdf -param robot_description -model arm1 -x 0.0 -y 0.0 -Y 0.0 -J joint1 0.0 -J joint2 -1.0 -J joint3 0.3 -J joint4 0.7 "/>
+    	
+    <!-- Spawn Arm 2 -->
+    <node name="spawn_arm2" pkg="gazebo_ros" type="spawn_model" output="screen" ns="arm2"
+          args="-urdf -param robot_description -model arm2 -x 0.0 -y 0.0 -Y 0.0 -J arm2_joint1 0.0 -J arm2_joint2 -1.0 -J arm2_joint3 0.3 -J arm2_joint4 0.7 "/>
+  </group>
+
+  <!-- controller utils -->
+  <include file="$(find open_manipulator_hw)/launch/controller_utils.launch" ns="arm1"/>
+  <include file="$(find open_manipulator_hw)/launch/controller_utils.launch" ns="arm2"/>
+  <!-- Arm 1: joint_trajectory_controller -->
+  <group unless="$(arg sim)">
+    <group ns = "arm1">
+    <rosparam file="$(find open_manipulator_controllers)/config/gravity_compensation_controller.yaml" command="load"/>
+    </group>
+  </group>
+  <group if="$(arg sim)">
+    <group ns = "arm1">
+    <rosparam file="$(find open_manipulator_controllers)/config/joint_trajectory_controller_gazebo.yaml" command="load" />
+    </group>
+  </group>
+
+  <!-- Arm 2: joint_trajectory_controller -->
+  <group unless="$(arg sim)">
+    <group ns = "arm2">
+    <rosparam file="$(find open_manipulator_controllers)/config/gravity_compensation_controller2.yaml" command="load"/>
+  </group>  
+  </group>
+  <group if="$(arg sim)">
+    <group ns = "arm2">
+      <rosparam file="$(find open_manipulator_controllers)/config/joint_trajectory_controller_gazebo2.yaml" command="load" />
+    </group>  
+  </group>
+
+  <!-- Arm 1: spawn controller -->
+  <node name="arm1_controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="spawn gravity_compensation_controller" ns="arm1"/>
+
+  <!-- Arm 2: spawn controller -->
+  <node name="arm2_controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="spawn gravity_compensation_controller2" ns="arm2"/>
+
+  <!-- Arm 1: startup move_group related -->
+  <include file="$(find open_manipulator_moveit_config)/launch/update_move_group.launch" ns ="arm1"/>
+
+
+  <!-- Arm 2: startup move_group related -->
+  <include file="$(find open_manipulator_moveit_config)/launch/update_move_group2.launch" ns ="arm2"/>
+
+
+  <!-- RViz for move_group -->
+  <include file="$(find open_manipulator_moveit_config)/launch/moveit_rviz.launch"/>
+  
+
+</launch>
